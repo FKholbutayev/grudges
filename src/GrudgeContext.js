@@ -48,6 +48,9 @@ export const GrudgeProvider = ({ children }) => {
   const [state, dispatch] = useTimeTravelReducer(reducer, initialState);
   const grudges = state.present;
 
+  const isPast = !!state.past.length;
+  const isFuture = !!state.future.length;
+
   const addGrudge = useCallback(
     ({ person, reason }) => {
       dispatch({
@@ -72,7 +75,23 @@ export const GrudgeProvider = ({ children }) => {
     [dispatch]
   );
 
-  const value = { addGrudge, toggleForgiveness, grudges };
+  const undo = useCallback(() => {
+    dispatch({ type: UNDO });
+  }, [dispatch]);
+
+  const redo = useCallback(() => {
+    dispatch({ type: REDO });
+  }, [dispatch]);
+
+  const value = {
+    addGrudge,
+    isPast,
+    isFuture,
+    toggleForgiveness,
+    grudges,
+    undo,
+    redo
+  };
 
   return (
     <GrudgeContext.Provider value={value}>{children}</GrudgeContext.Provider>
